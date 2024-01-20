@@ -31,34 +31,32 @@ fn main() {
 
         if input == "" {
             continue;
-        }
-        
-        if input == "exit" {
+        } else if input == "exit" {
             println!("Goodbye! <3");
             println!();
             break;
-        }
-
-        let mut args = process_input(input);
-        args.resize(3, "".to_string());
-
-        let expression = create_expression(args);
-
-        if expression.is_some() {
-            let unwrapped = expression.unwrap();        
-            let number1 = unwrapped.first;
-            let number2 = unwrapped.second;
-            let result: f64 = match unwrapped.operation {
-                Operation::Add => number1 + number2,
-                Operation::Subtract => number1 - number2,
-                Operation::Multiply => number1 * number2,
-                Operation::Divide => number1 / number2,
-                Operation::Exponent => number1.powf(number2),
-                Operation::SquareRoot => number1.sqrt(),
-            };
-            println!("{}", result);
         } else {
-            println!("Error occured :c");
+            let mut args = process_input(input);
+            args.resize(3, "".to_string());
+
+            let expression = create_expression(args);
+
+            if expression.is_some() {
+                let unwrapped = expression.unwrap();        
+                let number1 = unwrapped.first;
+                let number2 = unwrapped.second;
+                let result: f64 = match unwrapped.operation {
+                    Operation::Add => number1 + number2,
+                    Operation::Subtract => number1 - number2,
+                    Operation::Multiply => number1 * number2,
+                    Operation::Divide => number1 / number2,
+                    Operation::Exponent => number1.powf(number2),
+                    Operation::SquareRoot => number1.sqrt(),
+                };
+                println!("{}", result);
+            } else {
+                println!("Error occured :c");
+            }
         }
     }
 }
