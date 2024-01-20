@@ -9,12 +9,6 @@ enum Operation {
     SquareRoot,
 }
 
-impl fmt::Display for Operation {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self)
-    }
-}
-
 struct Expression {
     first: f64,
     operation: Operation,
