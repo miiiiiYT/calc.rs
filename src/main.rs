@@ -37,9 +37,11 @@ enum TextMode {
 }
 
 struct Messages {
+    license: &'static str,
     welcome: &'static str,
     goodbye: &'static str,
     error: &'static str,
+    info: &'static str,
 }
 
 fn main() {
@@ -55,6 +57,9 @@ fn main() {
 
     let messages = get_messages(mode);
 
+    if !(cli_args.contains(&String::from("--suppress-notice")) || cli_args.contains(&String::from("-n"))) {
+        println!("{}\n", messages.license);
+    }
     println!("{}",messages.welcome);
 
     loop {
@@ -68,6 +73,8 @@ fn main() {
             println!("{}",messages.goodbye);
             println!();
             break;
+        } else if input == "info" {
+            println!("{}",messages.info)
         } else {
             let mut args = process_input(input);
             args.resize(3, "".to_string());
@@ -97,14 +104,24 @@ fn main() {
 fn get_messages(mode: TextMode) -> Messages {
     match mode {
         TextMode::Silly => Messages {
+            license: "calc.rs  Copyright (C) 2024  miiiiiyt
+This program comes with ABSOLUTELY NO WARRANTY; for details type `info'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type `info' for details.",
             welcome: "Welcome to calc.rs :3\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
             goodbye: "Take care love <3",
             error: "Oopsie :c",
+            info: "calc.rs (c) 2024 miiiiiyt\nA basic commandline calculator written in Rust.\nGithub: https://github.com/miiiiiyt/calc.rs\nLicense: https://www.gnu.org/licenses/gpl-3.0\nNow with added fun! :3",
         },
         TextMode::Serious => Messages {
+            license: "calc.rs  Copyright (C) 2024  miiiiiyt
+This program comes with ABSOLUTELY NO WARRANTY; for details type `info'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type `info' for details.",
             welcome: "Welcome to calc.rs.\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
             goodbye: "Goodbye",
             error: "An error occured. Please check your input.\nIf you believe this to be a bug, please report it on the Github.\nType info for more info.",
+            info: "calc.rs (c) 2024 miiiiiyt\nA basic commandline calculator written in Rust.\nGithub: https://github.com/miiiiiyt/calc.rs\nLicense: https://www.gnu.org/licenses/gpl-3.0\nNo fun allowed today.\n(see https://github.com/miiiiiYT/calc.rs/tree/master#flags for instructions on how to enable fun)",
         }
     }
 }

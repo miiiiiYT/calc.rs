@@ -77,3 +77,11 @@ $ calc-rs
 Welcome to calc.rs
 calc.rs $>
 ```
+
+## Flags
+
+I have implemented a really important feature.  
+Run the program with either the `--serious` or `--silly` flag for some changed messages. `--serious` is applied by default.  
+This is mostly intended for aliases.
+
+You can also specify the `--suppress-notice` flag or it's shortform `-n` to disable the copyright notice at the beginning.
