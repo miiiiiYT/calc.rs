@@ -28,6 +28,10 @@ fn main() {
         print!("calc.rs $> ");
         io::Write::flush(&mut io::stdout()).expect("flush failed!");
         let input = read_input();
+
+        if input == "" {
+            continue;
+        }
         
         if input == "exit" {
             println!("Goodbye! <3");
