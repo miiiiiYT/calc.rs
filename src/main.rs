@@ -1,4 +1,4 @@
-use core::fmt;
+use std::env;
 use std::{io::{self, BufRead}, f64::NAN};
 enum Operation {
     Add,
@@ -15,8 +15,31 @@ struct Expression {
     second: f64,
 }
 
+enum TextMode {
+    Silly,
+    Serious,
+}
+
+struct Messages {
+    welcome: &'static str,
+    goodbye: &'static str,
+    error: &'static str,
+}
+
 fn main() {
-    println!("Welcome to calc.rs :3\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.");
+    let cli_args: Vec<String> = env::args().collect();
+
+    let mode = if cli_args.contains(&String::from("--serious")) {
+        TextMode::Serious
+    } else if cli_args.contains(&String::from("--silly")) {
+        TextMode::Silly
+    } else {
+        TextMode::Serious
+    };
+
+    let messages = get_messages(mode);
+
+    println!("{}",messages.welcome);
 
     loop {
         print!("calc.rs $> ");
@@ -26,7 +49,7 @@ fn main() {
         if input == "" {
             continue;
         } else if input == "exit" {
-            println!("Goodbye! <3");
+            println!("{}",messages.goodbye);
             println!();
             break;
         } else {
@@ -49,8 +72,23 @@ fn main() {
                 };
                 println!("{}", result);
             } else {
-                println!("Error occured :c");
+                println!("{}",messages.error);
             }
+        }
+    }
+}
+
+fn get_messages(mode: TextMode) -> Messages {
+    match mode {
+        TextMode::Silly => Messages {
+            welcome: "Welcome to calc.rs :3\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
+            goodbye: "Take care love <3",
+            error: "Oopsie :c",
+        },
+        TextMode::Serious => Messages {
+            welcome: "Welcome to calc.rs.\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
+            goodbye: "Goodbye",
+            error: "An error occured. Please check your input.\nIf you believe this to be a bug, please report it on the Github.\nType info for more info.",
         }
     }
 }
