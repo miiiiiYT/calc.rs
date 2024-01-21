@@ -76,16 +76,18 @@ fn main() {
         } else if input == "info" {
             println!("{}",messages.info)
         } else {
+            // if no commands are given, treat statement as math
             let mut args = process_input(input);
-            args.resize(3, "".to_string());
+            args.resize(3, "".to_string()); // currently, only 2 numbers (plus operation) are supported, so we truncate the vec
 
             let expression = create_expression(args);
 
             if expression.is_some() {
-                let unwrapped = expression.unwrap();        
+                let unwrapped = expression.unwrap(); //safe to unwrap, as the expression has to exist
                 let number1 = unwrapped.first;
                 let number2 = unwrapped.second;
                 let result: f64 = match unwrapped.operation {
+                    // check which operation has been given and calculate accordingly
                     Operation::Add => number1 + number2,
                     Operation::Subtract => number1 - number2,
                     Operation::Multiply => number1 * number2,
@@ -95,6 +97,7 @@ fn main() {
                 };
                 println!("{}", result);
             } else {
+                // expression empty? -> print error msg
                 println!("{}",messages.error);
             }
         }
@@ -103,14 +106,15 @@ fn main() {
 
 fn read_input() -> String {
     let stdin = io::stdin();
-    let line = stdin.lock().lines().next().unwrap().unwrap();
+    let line = stdin.lock().lines().next().unwrap().unwrap(); // TODO: implement panic safe
     return line
 }
 
 fn process_input(input: String) -> Vec<String> {
-    let args = input.split_whitespace();
-    let mut arg_list: Vec<String> = Vec::new();
+    let args = input.split_whitespace(); // split the string by whitespaces
+    let mut arg_list: Vec<String> = Vec::new(); // create new vec to hold the arguments
     for arg in args {
+        // add all arguments to the list
         arg_list.push(arg.to_string())
     }
     return arg_list
@@ -118,9 +122,11 @@ fn process_input(input: String) -> Vec<String> {
 
 fn create_expression(args: Vec<String>) -> Option<Expression> {
     if args.len() > 3 {
+        // failsafe, if somehow too many arguments are supplied, we return none
         None
     } else {
         let operation: Option<Operation> = match args.iter().nth(1).unwrap().chars().nth(0) {
+            // match against the operator
             Some('+') => Some(Operation::Add),
             Some('-') => Some(Operation::Subtract),
             Some('*') => Some(Operation::Multiply),
@@ -130,10 +136,12 @@ fn create_expression(args: Vec<String>) -> Option<Expression> {
             _ => None,
         };
         
+        // parse the numbers into floats or, if not given, into NaN
         let number1 = args.get(0)?.parse::<f64>().unwrap_or(NAN);
         let mut number2 = args.get(2)?.parse::<f64>().unwrap_or(NAN);
 
         if operation.is_some() {
+            // when an operation got found, we do some magic to allow people to only specify 2 arguments when square rooting
             let unwrapped_operation = operation.unwrap();
             if matches!(unwrapped_operation, Operation::SquareRoot) {
                 number2 = 0.0;
@@ -150,6 +158,7 @@ fn create_expression(args: Vec<String>) -> Option<Expression> {
 
 fn get_messages(mode: TextMode) -> Messages {
     match mode {
+        // matching against the mode and returning the corresponding messages
         TextMode::Silly => Messages {
             license: "calc.rs  Copyright (C) 2024  miiiiiyt
 This program comes with ABSOLUTELY NO WARRANTY; for details type `info'.
