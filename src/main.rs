@@ -155,15 +155,19 @@ fn create_expression(args: Vec<String>) -> Option<Expression> {
             _ => None,
         };
 
+        
         let number1 = args.get(0)?.parse::<f64>().unwrap_or(NAN);
-        let number2 = args.get(2)?.parse::<f64>().unwrap_or(NAN);
-
-        if number1.is_nan() || number2.is_nan() {
-            return None
-        }
+        let mut number2 = args.get(2)?.parse::<f64>().unwrap_or(NAN);
 
         if operation.is_some() {
-            Some(Expression { first: number1, operation: operation.unwrap(), second: number2 })
+            let unwrapped_operation = operation.unwrap();
+            if matches!(unwrapped_operation, Operation::SquareRoot) {
+                number2 = 0.0;
+            }
+            if number1.is_nan() || number2.is_nan() {
+                return None
+            }
+            Some(Expression { first: number1, operation: unwrapped_operation, second: number2 })
         } else {
             None
         }  
