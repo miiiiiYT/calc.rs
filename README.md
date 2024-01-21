@@ -47,7 +47,7 @@ calc.rs $> 2 ^ 2
 Square rooting:
 
 ```
-calc.rs $> 4 # <any number, doesn't matter>
+calc.rs $> 4 #
 2
 ```
 
