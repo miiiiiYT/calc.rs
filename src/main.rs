@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use std::env;
-use std::{io::{self, BufRead}, f64::NAN};
+use std::{io::{self, BufRead}, f64::NAN, env};
 enum Operation {
     Add,
     Subtract,
@@ -45,8 +44,9 @@ struct Messages {
 }
 
 fn main() {
-    let cli_args: Vec<String> = env::args().collect();
+    let cli_args: Vec<String> = env::args().collect(); // collect all arguments
 
+    // check for mode-specifying flags
     let mode = if cli_args.contains(&String::from("--serious")) {
         TextMode::Serious
     } else if cli_args.contains(&String::from("--silly")) {
@@ -55,20 +55,20 @@ fn main() {
         TextMode::Serious
     };
 
-    let messages = get_messages(mode);
+    let messages = get_messages(mode); // load messages
 
     if !(cli_args.contains(&String::from("--suppress-notice")) || cli_args.contains(&String::from("-n"))) {
-        println!("{}\n", messages.license);
+        println!("{}\n", messages.license); // only printing if neither of the flags are applied
     }
     println!("{}",messages.welcome);
 
     loop {
-        print!("calc.rs $> ");
-        io::Write::flush(&mut io::stdout()).expect("flush failed!");
+        print!("calc.rs $> "); // the flush here is needed, in order to print the prompt 
+        io::Write::flush(&mut io::stdout()).expect("flush failed!"); // TODO: implement panic safe flush
         let input = read_input();
 
         if input == "" {
-            continue;
+            // do nothing
         } else if input == "exit" {
             println!("{}",messages.goodbye);
             println!();
@@ -101,31 +101,6 @@ fn main() {
     }
 }
 
-fn get_messages(mode: TextMode) -> Messages {
-    match mode {
-        TextMode::Silly => Messages {
-            license: "calc.rs  Copyright (C) 2024  miiiiiyt
-This program comes with ABSOLUTELY NO WARRANTY; for details type `info'.
-This is free software, and you are welcome to redistribute it
-under certain conditions; type `info' for details.",
-            welcome: "Welcome to calc.rs :3\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
-            goodbye: "Take care love <3",
-            error: "Oopsie :c",
-            info: "calc.rs (c) 2024 miiiiiyt\nA basic commandline calculator written in Rust.\nGithub: https://github.com/miiiiiyt/calc.rs\nLicense: https://www.gnu.org/licenses/gpl-3.0\nNow with added fun! :3",
-        },
-        TextMode::Serious => Messages {
-            license: "calc.rs  Copyright (C) 2024  miiiiiyt
-This program comes with ABSOLUTELY NO WARRANTY; for details type `info'.
-This is free software, and you are welcome to redistribute it
-under certain conditions; type `info' for details.",
-            welcome: "Welcome to calc.rs.\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
-            goodbye: "Goodbye",
-            error: "An error occured. Please check your input.\nIf you believe this to be a bug, please report it on the Github.\nType info for more info.",
-            info: "calc.rs (c) 2024 miiiiiyt\nA basic commandline calculator written in Rust.\nGithub: https://github.com/miiiiiyt/calc.rs\nLicense: https://www.gnu.org/licenses/gpl-3.0\nNo fun allowed today.\n(see https://github.com/miiiiiYT/calc.rs/tree/master#flags for instructions on how to enable fun)",
-        }
-    }
-}
-
 fn read_input() -> String {
     let stdin = io::stdin();
     let line = stdin.lock().lines().next().unwrap().unwrap();
@@ -154,7 +129,6 @@ fn create_expression(args: Vec<String>) -> Option<Expression> {
             Some('#') => Some(Operation::SquareRoot),
             _ => None,
         };
-
         
         let number1 = args.get(0)?.parse::<f64>().unwrap_or(NAN);
         let mut number2 = args.get(2)?.parse::<f64>().unwrap_or(NAN);
@@ -172,6 +146,29 @@ fn create_expression(args: Vec<String>) -> Option<Expression> {
             None
         }  
     }
-    
-    
+}
+
+fn get_messages(mode: TextMode) -> Messages {
+    match mode {
+        TextMode::Silly => Messages {
+            license: "calc.rs  Copyright (C) 2024  miiiiiyt
+This program comes with ABSOLUTELY NO WARRANTY; for details type `info'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type `info' for details.",
+            welcome: "Welcome to calc.rs :3\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
+            goodbye: "Take care love <3",
+            error: "Oopsie :c",
+            info: "calc.rs (c) 2024 miiiiiyt\nA basic commandline calculator written in Rust.\nGithub: https://github.com/miiiiiyt/calc.rs\nLicense: https://www.gnu.org/licenses/gpl-3.0\nNow with added fun! :3",
+        },
+        TextMode::Serious => Messages {
+            license: "calc.rs  Copyright (C) 2024  miiiiiyt
+This program comes with ABSOLUTELY NO WARRANTY; for details type `info'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type `info' for details.",
+            welcome: "Welcome to calc.rs.\nMade by miiiiiyt.\nPlease note that of right now you can only supply two numbers.\nArguments need to be seperated by spaces.",
+            goodbye: "Goodbye",
+            error: "An error occured. Please check your input.\nIf you believe this to be a bug, please report it on the Github.\nType info for more info.",
+            info: "calc.rs (c) 2024 miiiiiyt\nA basic commandline calculator written in Rust.\nGithub: https://github.com/miiiiiyt/calc.rs\nLicense: https://www.gnu.org/licenses/gpl-3.0\nNo fun allowed today.\n(see https://github.com/miiiiiYT/calc.rs/tree/master#flags for instructions on how to enable fun)",
+        }
+    }
 }
